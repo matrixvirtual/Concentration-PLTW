@@ -23,12 +23,43 @@ public class Board
    * by populating it with card values
    * 
    */
-  public Board()
-  {
-   
+  public Board(){
+    
+      shuffleVal(tileValues);
+      int count = 0;
+      for(int row = 0; row < gameboard.length;row++){
+        for (int col = 0; col<gameboard[0].length;col++){
+        gameboard[row][col] = new Tile(tileValues[count]);
+        count++;
+        }
+       }
+  //  int count = 0; 
+  //  for(int i = 0;i<gameboard.length;i++){
+  //   for(int x= 0; x<gameboard[0].length;x++){
+  //     gameboard[i][x] = new Tile(tileValues[count]);
+  //     count++;
+  //   }
+  //   }
+  //   for(Tile[] row : gameboard){
+  //     for(Tile c : row){
+  //       System.out.print(c.getValue() + " ");
+  //     }
+  //     System.out.println();
+  //   }
+  //   gameboard.toString();
+
+   }
+   private void shuffleVal(String[] array) {
+    for(int index = array.length -1; index>0; index--){
+      int rand = (int) (Math.random() * (index +1));
+      String temp = array[index];
+      array[index] = array[rand];
+      array[rand] = temp;
+    }
+  }
     /* your code here */ 
 
-  }
+  
 
  /** 
    * Returns a string representation of the board, getting the state of
@@ -41,11 +72,21 @@ public class Board
    */
   public String toString()
   {
- 
-    /* your code here */
- 
-    return "";
-  }
+    String hid = "hidden";
+    String to = "";
+    for(Tile[] row : gameboard){
+      for(Tile c : row){
+        if(c.isShowingValue()){
+          to += c.getValue() + "\t";
+        }
+        else{
+          to+= c.getHidden() + "\t";
+        }
+      }
+      to += "\n";
+    }
+    return to;
+  }  
 
   /** 
    * Determines if the board is full of tiles that have all been matched,
@@ -57,10 +98,15 @@ public class Board
    */
   public boolean allTilesMatch()
   {
-
-    /* your code  here */
-    
+    for(Tile[] row : gameboard){
+      for(Tile x : row){
+        if(!x.matched()){
+          return false;
+        }
+      }
+    }
     return true;
+    /* your code  here */
   }
 
   /** 
@@ -76,7 +122,7 @@ public class Board
    */
   public void showValue (int row, int column)
   {
-   
+    gameboard[row][column].show();
     /* your code here */
   }  
 
@@ -99,13 +145,21 @@ public class Board
    */
   public String checkForMatch(int row1, int col1, int row2, int col2)
   {
-    String msg = "";
-
-     /* your code here */
-    
-     return msg;
+    if(validateSelection(row1,col1) && validateSelection(row2, col2)){
+    String msg = "Both Tiles Match!";
+    if(gameboard[row1][col1].getValue().equals(gameboard[row2][col2].getValue())){
+      gameboard[row1][col1].foundMatch();
+      gameboard[row2][col2].foundMatch();
+      return msg;
+    }
+    else{
+      gameboard[row1][col1].hide();
+      gameboard[row2][col2].hide();
+    }
   }
-
+    return "";
+  
+  }
   /** 
    * Checks the provided values fall within the range of the gameboard's dimension
    * and that the tile has not been previously matched
@@ -116,10 +170,11 @@ public class Board
    */
   public boolean validateSelection(int row, int col)
   {
-
-    /* your code here */
-
-    return true;
+    if(row <gameboard.length && col<gameboard[0].length && !gameboard[row][col].matched())
+      return true;
+    else {
+      return false;
+    }
   }
 
 }
